@@ -1,0 +1,21 @@
+# Dockerfile for Express API Server
+
+FROM node:20-alpine
+WORKDIR /app
+
+# Copy dependency configurations
+COPY package*.json ./
+
+# Install only production dependencies
+RUN npm ci --only=production
+
+# Copy source directory containing the backend server and its local module dependencies
+COPY src ./src
+
+# Expose backend service port
+EXPOSE 4000
+ENV PORT=4000
+ENV NODE_ENV=production
+
+# Start Express backend
+CMD ["node", "src/app/server.js"]

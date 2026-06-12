@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: default
+data:
+  NEXT_PUBLIC_APPWRITE_ENDPOINT: "https://sgp.cloud.appwrite.io/v1"
+  NEXT_PUBLIC_APPWRITE_PROJECT_ID: "ubdt-events"
+  NEXT_PUBLIC_APPWRITE_PROJECT_NAME: "UBDT Events"
+  NEXT_PUBLIC_APPWRITE_DATABASE_ID: "ubdt-events-db"
+  NEXT_PUBLIC_EVENTS_DATABASE_ID: "events-list"
+  NEXT_PUBLIC_EVENTS_COLLECTION_ID: "events"
+  NEXT_PUBLIC_APPWRITE_STORAGE_BUCKET_ID: "payment-screenshot-bucket"
+  NEXT_PUBLIC_APPWRITE_EVENTS_STORAGE_BUCKET_ID: "events-bucket"
+  APPWRITE_ENDPOINT: "https://sgp.cloud.appwrite.io/v1"
+  APPWRITE_PROJECT_ID: "ubdt-events"
+  ALLOWED_ORIGINS: "*"
+  PORT: "4000"
