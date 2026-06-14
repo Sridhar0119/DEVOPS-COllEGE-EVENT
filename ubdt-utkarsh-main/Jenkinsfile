@@ -1,32 +1,57 @@
 pipeline {
-    agent any
+agent any
 
-    stages {
+```
+stages {
 
-        stage('Checkout') {
-            steps {
-                git 'https://github.com/Sridhar0119/DEVOPS-COllEGE-EVENT.git'
-            }
-        }
-
-        stage('Build Docker Image') {
-            steps {
-                sh 'docker build -t college-event-app .'
-            }
-        }
-
-        stage('Deploy Container') {
-            steps {
-                sh '''
-                docker stop college-event-app || true
-                docker rm college-event-app || true
-
-                docker run -d \
-                --name college-event-app \
-                -p 80:3000 \
-                college-event-app
-                '''
-            }
+    stage('Checkout') {
+        steps {
+            git branch: 'main',
+                credentialsId: 'git_id',
+                url: 'https://github.com/Sridhar0119/DEVOPS-COllEGE-EVENT.git'
         }
     }
+
+    stage('Build Frontend Image') {
+        steps {
+            sh 'docker build -t frontend-app -f Dockerfile.frontend .'
+        }
+    }
+
+    stage('Build Backend Image') {
+        steps {
+            sh 'docker build -t backend-app -f Dockerfile.backend .'
+        }
+    }
+
+    stage('Deploy Containers') {
+        steps {
+            sh '''
+            docker stop frontend-app backend-app || true
+            docker rm frontend-app backend-app || true
+
+            docker run -d \
+            --name backend-app \
+            -p 5000:5000 \
+            backend-app
+
+            docker run -d \
+            --name frontend-app \
+            -p 80:80 \
+            frontend-app
+            '''
+        }
+    }
+}
+
+post {
+    success {
+        echo 'Deployment Successful'
+    }
+    failure {
+        echo 'Deployment Failed'
+    }
+}
+```
+
 }
