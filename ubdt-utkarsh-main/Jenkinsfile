@@ -1,111 +1,32 @@
 pipeline {
     agent any
-    
-    environment {
-        AWS_ACCOUNT_ID     = '123456789012'            // Replace with your AWS Account ID
-        AWS_DEFAULT_REGION = 'us-east-1'               // Replace with your AWS Region
-        ECR_CREDENTIALS_ID = 'aws-credentials'         // Jenkins Credentials ID for AWS Access Keys
-        EKS_CLUSTER_NAME   = 'ubdt-eks-cluster'        // Replace with your EKS cluster name
-        
-        FRONTEND_IMAGE     = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/ubdt-frontend"
-        BACKEND_IMAGE      = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/ubdt-backend"
-    }
-    
+
     stages {
+
         stage('Checkout') {
             steps {
-                checkout scm
+                git 'https://github.com/Sridhar0119/DEVOPS-COllEGE-EVENT.git'
             }
         }
-        
-        stage('Install Dependencies & Verification') {
+
+        stage('Build Docker Image') {
             steps {
-                sh 'npm install'
-                sh 'npm run build'
+                sh 'docker build -t college-event-app .'
             }
         }
-        
-        stage('Build Docker Images') {
+
+        stage('Deploy Container') {
             steps {
-                script {
-                    echo "Building Frontend Docker Image..."
-                    sh "docker build -t ${FRONTEND_IMAGE}:${BUILD_NUMBER} -t ${FRONTEND_IMAGE}:latest -f Dockerfile.frontend ."
-                    
-                    echo "Building Backend Docker Image..."
-                    sh "docker build -t ${BACKEND_IMAGE}:${BUILD_NUMBER} -t ${BACKEND_IMAGE}:latest -f Dockerfile.backend ."
-                }
+                sh '''
+                docker stop college-event-app || true
+                docker rm college-event-app || true
+
+                docker run -d \
+                --name college-event-app \
+                -p 80:3000 \
+                college-event-app
+                '''
             }
-        }
-        
-        stage('Push to AWS ECR') {
-            steps {
-                script {
-                    withCredentials([[
-                        $class: 'AmazonWebServicesCredentialsBinding',
-                        credentialsId: "${ECR_CREDENTIALS_ID}"
-                    ]]) {
-                        echo "Logging into AWS ECR..."
-                        sh "aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"
-                        
-                        echo "Pushing Frontend Image..."
-                        sh "docker push ${FRONTEND_IMAGE}:${BUILD_NUMBER}"
-                        sh "docker push ${FRONTEND_IMAGE}:latest"
-                        
-                        echo "Pushing Backend Image..."
-                        sh "docker push ${BACKEND_IMAGE}:${BUILD_NUMBER}"
-                        sh "docker push ${BACKEND_IMAGE}:latest"
-                    }
-                }
-            }
-        }
-        
-        stage('Deploy to EKS') {
-            steps {
-                script {
-                    withCredentials([[
-                        $class: 'AmazonWebServicesCredentialsBinding',
-                        credentialsId: "${ECR_CREDENTIALS_ID}"
-                    ]]) {
-                        echo "Configuring kubectl for EKS cluster: ${EKS_CLUSTER_NAME}..."
-                        sh "aws eks update-kubeconfig --region ${AWS_DEFAULT_REGION} --name ${EKS_CLUSTER_NAME}"
-                        
-                        echo "Injecting build tags into manifest files..."
-                        // Replace default image reference with ECR image and build number tag
-                        sh "sed -i 's|image: .*/ubdt-frontend:.*|image: ${FRONTEND_IMAGE}:${BUILD_NUMBER}|g' k8s/frontend-deployment.yaml"
-                        sh "sed -i 's|image: .*/ubdt-backend:.*|image: ${BACKEND_IMAGE}:${BUILD_NUMBER}|g' k8s/backend-deployment.yaml"
-                        
-                        echo "Applying ConfigMaps and Secrets..."
-                        sh "kubectl apply -f k8s/configmap.yaml"
-                        sh "kubectl apply -f k8s/secrets.yaml"
-                        
-                        echo "Deploying applications..."
-                        sh "kubectl apply -f k8s/frontend-deployment.yaml"
-                        sh "kubectl apply -f k8s/backend-deployment.yaml"
-                        sh "kubectl apply -f k8s/nginx-gateway.yaml"
-                        
-                        echo "Verifying Rollout Status..."
-                        sh "kubectl rollout status deployment/frontend --timeout=3m"
-                        sh "kubectl rollout status deployment/backend --timeout=3m"
-                        sh "kubectl rollout status deployment/nginx-gateway --timeout=3m"
-                    }
-                }
-            }
-        }
-    }
-    
-    post {
-        always {
-            echo "Cleaning up local build workspace images..."
-            sh "docker rmi ${FRONTEND_IMAGE}:${BUILD_NUMBER} || true"
-            sh "docker rmi ${FRONTEND_IMAGE}:latest || true"
-            sh "docker rmi ${BACKEND_IMAGE}:${BUILD_NUMBER} || true"
-            sh "docker rmi ${BACKEND_IMAGE}:latest || true"
-        }
-        success {
-            echo "Deployment Pipeline completed successfully."
-        }
-        failure {
-            echo "Deployment Pipeline failed. Please check build logs."
         }
     }
 }
