@@ -7,7 +7,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install only production dependencies
-RUN npm ci --only=production
+RUN npm install --only=production
 
 # Copy source directory containing the backend server and its local module dependencies
 COPY src ./src

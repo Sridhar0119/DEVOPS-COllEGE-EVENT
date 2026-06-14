@@ -6,7 +6,7 @@ WORKDIR /app
 
 # Check if npm or pnpm is used. Using npm package-lock for clean install.
 COPY package*.json ./
-RUN npm ci
+RUN npm install
 
 # Copy the rest of the application code
 COPY . .
