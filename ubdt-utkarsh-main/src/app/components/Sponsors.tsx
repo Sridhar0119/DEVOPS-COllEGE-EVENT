@@ -52,7 +52,7 @@ const Sponsors = () => {
   const animationDuration = Math.max(20, sponsors.length * 3);
 
   return (
-    <section id="sponsors" className="py-12 md:py-24 bg-gradient-to-b from-muted/30 to-background scroll-mt-16">
+    <section id="sponsors" className="py-20 md:py-28 bg-gradient-to-b from-[#14031d] to-[#0d0213] scroll-mt-16">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -61,9 +61,9 @@ const Sponsors = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-8 md:mb-12"
         >
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 md:mb-4">
-            <span className="bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
-              $ponsors
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black mb-4">
+            <span className="bg-gradient-to-r from-amber-400 via-orange-500 to-rose-500 bg-clip-text text-transparent">
+              Sponsors
             </span>
           </h2>
           <p className="text-muted-foreground text-base md:text-lg max-w-2xl mx-auto px-4">
@@ -83,7 +83,7 @@ const Sponsors = () => {
             <motion.div
               key={sponsor.id}
               variants={itemVariants}
-              className="relative bg-card/50 backdrop-blur-sm border border-border/50 rounded-xl p-4 sm:p-5 flex flex-col items-center justify-center gap-3 transition-all duration-300"
+              className="relative bg-card/40 backdrop-blur-md border border-orange-500/10 hover:border-amber-500/50 hover:shadow-[0_8px_30px_rgba(245,158,11,0.15)] rounded-2xl p-5 flex flex-col items-center justify-center gap-3 transition-all duration-300"
             >
               <div className="relative w-full h-24 flex items-center justify-center">
                 <Image
@@ -156,7 +156,7 @@ const Sponsors = () => {
           Interested in sponsoring Utkarsh?{" "}
           <a
             href="mailto:sponsership@utkarshubdt.in"
-            className="text-purple-400 hover:text-purple-300 underline underline-offset-4 transition-colors"
+            className="text-amber-400 hover:text-amber-300 underline underline-offset-4 transition-colors font-semibold"
           >
             Contact us
           </a>

@@ -101,6 +101,10 @@ const Events = () => {
     if (!value) return null;
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) return null;
+    // Shift month from February (1) to June (5)
+    if (date.getMonth() === 1) {
+      date.setMonth(5);
+    }
     const datePart = date.toLocaleDateString(undefined, {
       year: "numeric",
       month: "short",
@@ -115,22 +119,22 @@ const Events = () => {
 
   return (
     <>
-      <section id="events" className="py-16 md:py-24 scroll-mt-16 bg-gradient-to-b from-background via-muted/20 to-background">
+      <section id="events" className="py-20 md:py-28 scroll-mt-16 bg-gradient-to-b from-[#0d0213] via-[#1e0329]/10 to-[#0d0213]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <motion.div
-            className="text-center mb-12 md:mb-16"
+            className="text-center mb-16 md:mb-20"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
-              <span className="bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-black mb-4">
+              <span className="bg-gradient-to-r from-amber-400 via-orange-500 to-rose-500 bg-clip-text text-transparent">
                 Featured Events
               </span>
             </h2>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Explore our exciting lineup of technical and cultural events
+            <p className="text-muted-foreground text-base sm:text-lg max-w-2xl mx-auto">
+              Explore our exciting lineup of technical and cultural events packed with high energy and massive prizes.
             </p>
           </motion.div>
 
@@ -155,7 +159,7 @@ const Events = () => {
                   whileHover={{ y: -8, transition: { duration: 0.3 } }}
                   className="group"
                 >
-                  <Card className="flex h-full flex-col bg-card/50 backdrop-blur-sm overflow-hidden border border-border/50 hover:border-purple-500/50 transition-all duration-300 rounded-2xl hover:shadow-[0_8px_30px_rgba(139,92,246,0.15)]">
+                  <Card className="flex h-full flex-col bg-card/40 backdrop-blur-md overflow-hidden border border-orange-500/10 hover:border-amber-500/50 transition-all duration-300 rounded-3xl hover:shadow-[0_8px_30px_rgba(245,158,11,0.15)]">
                     {getThumbnailUrl(event) && (
                       <div className="w-full h-48 sm:h-52 relative overflow-hidden">
                         <Image
@@ -166,11 +170,11 @@ const Events = () => {
                           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                           loading="lazy"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                       </div>
                     )}
                     <CardHeader className="pb-2">
-                      <CardTitle className="text-lg sm:text-xl line-clamp-2 group-hover:text-purple-400 transition-colors">
+                      <CardTitle className="text-xl sm:text-2xl font-bold line-clamp-2 group-hover:text-amber-400 transition-colors">
                         {event.name}
                       </CardTitle>
                     </CardHeader>
@@ -180,17 +184,17 @@ const Events = () => {
                         {getShortDescription(event.eventDescription, 80)}
                       </p>
                       <div className="space-y-2">
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <FaUsers className="h-4 w-4 text-purple-400" />
+                        <div className="flex items-center gap-2.5 text-sm font-semibold text-muted-foreground">
+                          <FaUsers className="h-4 w-4 text-orange-400" />
                           <span>
                             {event.maxParticipants === 1
-                              ? "Individual"
-                              : `Team of ${event.maxParticipants}`}
+                              ? "Individual Participation"
+                              : `Team of ${event.maxParticipants} Members`}
                           </span>
                         </div>
                         {formatEventDateTime(event.eventDateTime) && (
-                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <FaRegClock className="h-4 w-4 text-blue-400" />
+                          <div className="flex items-center gap-2.5 text-sm font-semibold text-muted-foreground">
+                            <FaRegClock className="h-4 w-4 text-rose-400" />
                             <span>{formatEventDateTime(event.eventDateTime)}</span>
                           </div>
                         )}
@@ -199,14 +203,14 @@ const Events = () => {
                     <CardFooter className="pt-4">
                       <div className="flex w-full gap-2 flex-col sm:flex-row">
                         <Link href={`/events/${event.eventId}`} className="flex-1">
-                          <Button className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 transition-all duration-300 group/btn">
+                          <Button className="w-full bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 font-bold transition-all duration-300 group/btn">
                             Explore <FaLongArrowAltRight className="ml-2 group-hover/btn:translate-x-1 transition-transform" />
                           </Button>
                         </Link>
                         <Link href={`/register?event=${event.collectionId}`} className="flex-1">
                           <Button
                             variant="outline"
-                            className="w-full border-purple-500/50 hover:bg-purple-500/10 hover:border-purple-500 transition-all duration-300"
+                            className="w-full border-orange-500/40 text-orange-200 hover:bg-orange-500/10 hover:border-orange-500 font-bold transition-all duration-300"
                           >
                             Register
                           </Button>

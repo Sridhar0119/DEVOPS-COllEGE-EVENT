@@ -71,6 +71,10 @@ export default function EventPage({ params }: EventPageProps) {
     if (!value) return null;
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) return null;
+    // Shift month from February (1) to June (5)
+    if (date.getMonth() === 1) {
+      date.setMonth(5);
+    }
     const datePart = date.toLocaleDateString(undefined, {
       year: "numeric",
       month: "short",
@@ -88,43 +92,43 @@ export default function EventPage({ params }: EventPageProps) {
   }
 
   if (!event) {
-    return (
-      <div className="min-h-screen relative overflow-hidden pt-16 flex items-center justify-center">
-        {/* Background Gradient */}
-        <div className="fixed inset-0 bg-gradient-to-br from-purple-950 via-background to-blue-950 -z-10">
-          <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-20" />
+      return (
+        <div className="min-h-screen relative overflow-hidden pt-16 flex items-center justify-center">
+          {/* Background Gradient */}
+          <div className="fixed inset-0 bg-gradient-to-br from-[#0d0213] via-[#06010a] to-[#1f0318] -z-10">
+            <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-20" />
+          </div>
+          <div className="text-center px-4">
+            <h1 className="text-xl sm:text-2xl font-bold mb-4 text-white">Event Not Found</h1>
+            <p className="text-white/60 mb-6">
+              The event you&apos;re looking for doesn&apos;t exist.
+            </p>
+            <Link href="/">
+              <Button className="bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-white">
+                <FaArrowLeft className="mr-2" />
+                Back to Home
+              </Button>
+            </Link>
+          </div>
         </div>
-        <div className="text-center px-4">
-          <h1 className="text-xl sm:text-2xl font-bold mb-4 text-white">Event Not Found</h1>
-          <p className="text-white/60 mb-6">
-            The event you&apos;re looking for doesn&apos;t exist.
-          </p>
-          <Link href="/">
-            <Button className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white">
-              <FaArrowLeft className="mr-2" />
-              Back to Home
-            </Button>
-          </Link>
-        </div>
-      </div>
-    );
+      );
   }
 
   return (
     <div className="min-h-screen relative overflow-hidden pt-16">
       {/* Background Gradient */}
-      <div className="fixed inset-0 bg-gradient-to-br from-purple-950 via-background to-blue-950 -z-10">
+      <div className="fixed inset-0 bg-gradient-to-br from-[#0d0213] via-[#06010a] to-[#1f0318] -z-10">
         <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-20" />
       </div>
       
       {/* Animated Background Orbs */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
         <div 
-          className="absolute w-48 sm:w-72 h-48 sm:h-72 bg-purple-500/20 rounded-full blur-3xl animate-pulse"
+          className="absolute w-48 sm:w-72 h-48 sm:h-72 bg-amber-500/20 rounded-full blur-3xl animate-pulse"
           style={{ top: "10%", left: "5%" }}
         />
         <div 
-          className="absolute w-64 sm:w-96 h-64 sm:h-96 bg-blue-500/15 rounded-full blur-3xl animate-pulse"
+          className="absolute w-64 sm:w-96 h-64 sm:h-96 bg-orange-500/15 rounded-full blur-3xl animate-pulse"
           style={{ bottom: "10%", right: "5%", animationDelay: "1s" }}
         />
       </div>
@@ -141,7 +145,7 @@ export default function EventPage({ params }: EventPageProps) {
               <FaArrowLeft className="h-4 w-4" />
             </Link>
           </Button>
-          <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-white via-purple-200 to-white bg-clip-text text-transparent">
+          <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-amber-400 via-orange-500 to-rose-500 bg-clip-text text-transparent">
             {event.name}
           </h1>
         </div>
@@ -153,7 +157,7 @@ export default function EventPage({ params }: EventPageProps) {
           className="space-y-6 sm:space-y-8"
         >
           {/* Event Description Card */}
-          <Card className="bg-white/5 backdrop-blur-md border-white/10">
+          <Card className="bg-white/5 backdrop-blur-md border-orange-500/10">
             <CardHeader>
               <CardTitle className="text-white text-lg sm:text-xl">About the Event</CardTitle>
               <CardDescription className="text-white/60">{event.eventDescription}</CardDescription>
@@ -161,7 +165,7 @@ export default function EventPage({ params }: EventPageProps) {
             <CardContent>
               <div className="flex flex-col sm:flex-row flex-wrap gap-4 sm:gap-6">
                 <div className="flex items-center gap-2 text-white/80">
-                  <FaUsers className="h-5 w-5 text-purple-400 shrink-0" />
+                  <FaUsers className="h-5 w-5 text-orange-400 shrink-0" />
                   <span className="text-sm sm:text-base">
                     {event.maxParticipants === 1
                       ? "Individual Participation"
@@ -170,14 +174,14 @@ export default function EventPage({ params }: EventPageProps) {
                 </div>
                 {formatEventDateTime(event.eventDateTime) && (
                   <div className="flex items-center gap-2 text-white/80">
-                    <FaRegClock className="h-5 w-5 text-blue-400 shrink-0" />
+                    <FaRegClock className="h-5 w-5 text-rose-400 shrink-0" />
                     <span className="text-sm sm:text-base">
                       {formatEventDateTime(event.eventDateTime)}
                     </span>
                   </div>
                 )}
                 <div className="flex items-center gap-2 text-white/80">
-                  <FaRupeeSign className="h-5 w-5 text-blue-400 shrink-0" />
+                  <FaRupeeSign className="h-5 w-5 text-amber-400 shrink-0" />
                   <span className="text-sm sm:text-base">Registration Fee: ₹{event.price}</span>
                 </div>
               </div>
@@ -185,14 +189,14 @@ export default function EventPage({ params }: EventPageProps) {
           </Card>
 
           {/* Rules Card */}
-          <Card className="bg-white/5 backdrop-blur-md border-white/10">
+          <Card className="bg-white/5 backdrop-blur-md border-orange-500/10">
             <CardHeader>
               <CardTitle className="text-white text-lg sm:text-xl">Rules & Guidelines</CardTitle>
             </CardHeader>
             <CardContent>
               <motion.div variants={fadeIn}>
                 <div 
-                  className="prose prose-invert max-w-none prose-headings:text-white prose-p:text-white/70 prose-li:text-white/70 prose-strong:text-white prose-a:text-purple-400 prose-a:hover:text-purple-300 prose-ul:list-disc prose-ol:list-decimal prose-ul:pl-6 prose-ol:pl-6 prose-sm sm:prose-base"
+                  className="prose prose-invert max-w-none prose-headings:text-white prose-p:text-white/70 prose-li:text-white/70 prose-strong:text-white prose-a:text-amber-400 prose-a:hover:text-amber-300 prose-ul:list-disc prose-ol:list-decimal prose-ul:pl-6 prose-ol:pl-6 prose-sm sm:prose-base"
                   dangerouslySetInnerHTML={{ 
                     __html: event.eventRules || "<p>Rules will be announced soon.</p>" 
                   }}
@@ -202,7 +206,7 @@ export default function EventPage({ params }: EventPageProps) {
           </Card>
 
           {/* Coordinators Card */}
-          <Card className="bg-white/5 backdrop-blur-md border-white/10">
+          <Card className="bg-white/5 backdrop-blur-md border-orange-500/10">
             <CardHeader>
               <CardTitle className="text-white text-lg sm:text-xl">Event Coordinators</CardTitle>
               <CardDescription className="text-white/60">
@@ -223,7 +227,7 @@ export default function EventPage({ params }: EventPageProps) {
                         {coordinator.phone && (
                           <a
                             href={`tel:${coordinator.phone}`}
-                            className="flex items-center gap-2 text-xs sm:text-sm text-purple-400 hover:text-purple-300 transition-colors mt-1"
+                            className="flex items-center gap-2 text-xs sm:text-sm text-amber-400 hover:text-amber-300 transition-colors mt-1"
                           >
                             <FaPhoneAlt className="h-3 w-3 shrink-0" />
                             {coordinator.phone}
@@ -246,7 +250,7 @@ export default function EventPage({ params }: EventPageProps) {
             <Link href={`/register?event=${event.collectionId}`} className="w-full sm:w-auto">
               <Button 
                 size="lg" 
-                className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white transition-all duration-300 hover:scale-105 hover:shadow-[0_0_30px_rgba(139,92,246,0.4)]"
+                className="w-full bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-white transition-all duration-300 hover:scale-105 hover:shadow-[0_0_30px_rgba(249,115,22,0.4)]"
               >
                 Register Now
               </Button>
@@ -265,7 +269,7 @@ export default function EventPage({ params }: EventPageProps) {
                 <Button 
                   size="lg" 
                   variant="outline" 
-                  className="w-full border-white/20 text-white hover:bg-white/10 transition-all duration-300"
+                  className="w-full border-orange-500/30 text-orange-200 hover:bg-orange-500/10 hover:border-orange-500 transition-all duration-300"
                 >
                   <FaDownload className="mr-2 h-4 w-4" />
                   Brochure

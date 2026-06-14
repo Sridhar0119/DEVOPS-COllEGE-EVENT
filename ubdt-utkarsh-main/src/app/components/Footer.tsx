@@ -9,16 +9,16 @@ import { motion } from "framer-motion";
 const Footer = () => {
   return (
     <>
-      <footer className="bg-gradient-to-b from-muted to-background py-16 border-t border-border/50">
+      <footer className="bg-gradient-to-b from-[#0d0213] to-[#040107] py-16 border-t border-orange-500/10">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16">
             {/* Map */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
-              className="h-[300px] sm:h-[400px] rounded-2xl overflow-hidden shadow-lg border border-border/50"
+              className="h-[300px] sm:h-[400px] rounded-3xl overflow-hidden shadow-lg border border-orange-500/10 hover:border-amber-500/30 hover:shadow-[0_8px_30px_rgba(245,158,11,0.1)] transition-all duration-300"
             >
               <iframe
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3496.329490092428!2d75.9150784745704!3d14.451935480700214!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bba256dffbbba99%3A0x2e095478f115a69b!2sUniversity%20BDT%20College%20of%20Engineering%20(UBDT)%20%7C%7C%20Davangere!5e1!3m2!1sen!2sin!4v1767428870179!5m2!1sen!2sin"
@@ -31,7 +31,7 @@ const Footer = () => {
               ></iframe>
             </motion.div>
 
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
@@ -39,13 +39,13 @@ const Footer = () => {
               className="space-y-8"
             >
               <div>
-                <h3 className="text-xl sm:text-2xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
+                <h3 className="text-xl sm:text-2xl font-black mb-4 text-gold-gradient">
                   Event Venue
                 </h3>
                 <div className="space-y-4">
                   <div className="flex items-start gap-3">
-                    <LuMapPin className="h-5 w-5 text-purple-400 mt-1 flex-shrink-0" />
-                    <p className="text-muted-foreground">
+                    <LuMapPin className="h-5 w-5 text-amber-500 mt-1 flex-shrink-0 animate-pulse" />
+                    <p className="text-muted-foreground font-medium">
                       Hadadi Road, Post Box No. 304, Davangere-577004. Karnataka
                     </p>
                   </div>
@@ -53,25 +53,25 @@ const Footer = () => {
               </div>
 
               <div>
-                <h3 className="text-xl sm:text-2xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
-                  Contacts
+                <h3 className="text-xl sm:text-2xl font-black mb-4 text-gold-gradient">
+                  Contacts & Support
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="bg-card/50 backdrop-blur-sm p-4 rounded-xl border border-border/50">
-                    <span className="font-medium block mb-2">Vinay N</span>
+                  <div className="bg-white/[0.02] backdrop-blur-md p-4 rounded-2xl border border-orange-500/10 hover:border-amber-500/30 hover:shadow-[0_4px_20px_rgba(245,158,11,0.1)] transition-all duration-300">
+                    <span className="font-bold block mb-1 text-white/90">Student Support</span>
                     <div className="flex items-center gap-2 text-muted-foreground">
-                      <IoIosCall className="h-4 w-4 text-purple-400" />
-                      <Link href="tel:+919008980114" className="hover:text-purple-400 transition-colors">
-                        +91 9008980114
+                      <IoIosCall className="h-4 w-4 text-amber-500" />
+                      <Link href="tel:+919876543210" className="hover:text-amber-400 transition-colors font-medium">
+                        +91 98765 43210
                       </Link>
                     </div>
                   </div>
-                  <div className="bg-card/50 backdrop-blur-sm p-4 rounded-xl border border-border/50">
-                    <span className="font-medium block mb-2">Shravan MS</span>
+                  <div className="bg-white/[0.02] backdrop-blur-md p-4 rounded-2xl border border-orange-500/10 hover:border-amber-500/30 hover:shadow-[0_4px_20px_rgba(245,158,11,0.1)] transition-all duration-300">
+                    <span className="font-bold block mb-1 text-white/90">Staff Coordinator</span>
                     <div className="flex items-center gap-2 text-muted-foreground">
-                      <IoIosCall className="h-4 w-4 text-purple-400" />
-                      <Link href="tel:+917483855961" className="hover:text-purple-400 transition-colors">
-                        +91 7483855961
+                      <IoIosCall className="h-4 w-4 text-amber-500" />
+                      <Link href="tel:+919123456789" className="hover:text-amber-400 transition-colors font-medium">
+                        +91 91234 56789
                       </Link>
                     </div>
                   </div>
@@ -79,19 +79,19 @@ const Footer = () => {
               </div>
 
               <div>
-                <h3 className="text-xl sm:text-2xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
+                <h3 className="text-xl sm:text-2xl font-black mb-4 text-gold-gradient">
                   Social Media
                 </h3>
                 <div className="flex items-center gap-4">
                   <Link
-                    href="https://instagram.com/ubdtutkarsh"
+                    href="https://instagram.com/yourfest_handle"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 bg-card/50 backdrop-blur-sm px-4 py-3 rounded-xl border border-border/50 hover:border-purple-500/50 transition-all group"
+                    className="flex items-center gap-2 bg-white/[0.02] backdrop-blur-md px-4 py-3 rounded-2xl border border-orange-500/10 hover:border-amber-500/30 hover:shadow-[0_4px_20px_rgba(245,158,11,0.1)] transition-all duration-300 group"
                   >
-                    <FaInstagram className="h-5 w-5 text-pink-500 group-hover:scale-110 transition-transform" />
-                    <span className="text-muted-foreground group-hover:text-foreground transition-colors">
-                      @ubdtutkarsh
+                    <FaInstagram className="h-5 w-5 text-rose-500 group-hover:scale-110 transition-transform" />
+                    <span className="text-muted-foreground group-hover:text-amber-400 transition-colors font-semibold">
+                      @yourfest_handle
                     </span>
                   </Link>
                 </div>
@@ -99,25 +99,25 @@ const Footer = () => {
             </motion.div>
           </div>
 
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="mt-12 md:mt-16 pt-8 border-t border-border/50 text-center"
+            className="mt-12 md:mt-16 pt-8 border-t border-orange-500/10 text-center"
           >
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-muted-foreground font-medium">
               &copy; {new Date().getFullYear()} UBDT Utkarsh. All rights reserved.
             </p>
-            <p className="text-sm text-muted-foreground mt-2">
-              Developed with ❤️ by{" "}
+            <p className="text-sm text-muted-foreground mt-2 font-medium">
+              Developed  by{" "}
               <Link
                 href="https://lnbg.in"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-purple-400 hover:text-purple-300 transition-colors"
+                className="text-amber-400 hover:text-amber-300 transition-colors font-semibold"
               >
-                Lakshminarayana BG
+                SRIDHAR PATIL M
               </Link>
             </p>
           </motion.div>

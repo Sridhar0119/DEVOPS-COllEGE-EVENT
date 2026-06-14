@@ -125,7 +125,7 @@ const SwipeCard = ({ card, index, totalCards, removeCard, isTop }: SwipeCardProp
         damping: 25,
       }}
     >
-      <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-2xl border-4 border-white/20 bg-card">
+      <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-2xl border-4 border-orange-500/20 bg-card">
         <Image
           src={card.src}
           alt={card.alt}
@@ -178,7 +178,7 @@ const DesktopGallery = ({ images }: { images: GalleryImage[] }) => {
                 height: "380px",
               }}
             >
-              <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-lg">
+              <div className="relative w-full h-full rounded-2xl overflow-hidden border border-orange-500/10 hover:border-amber-500/50 hover:shadow-[0_8px_30px_rgba(245,158,11,0.25)] shadow-lg transition-all duration-300">
                 <Image
                   src={image.src}
                   alt={image.alt}
@@ -226,22 +226,22 @@ const DesktopGallery = ({ images }: { images: GalleryImage[] }) => {
 
 const Gallery = ({ images = defaultImages }: GalleryProps) => {
   return (
-    <section className="py-12 md:py-24 overflow-hidden bg-gradient-to-b from-background to-muted/30">
+    <section id="highlights" className="py-20 md:py-28 overflow-hidden bg-gradient-to-b from-[#0d0213] to-[#14031d] scroll-mt-16">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-8 md:mb-12"
+          className="text-center mb-12 md:mb-16"
         >
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 md:mb-4">
-            <span className="bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black mb-4">
+            <span className="bg-gradient-to-r from-amber-400 via-orange-500 to-rose-500 bg-clip-text text-transparent">
               Event Highlights
             </span>
           </h2>
           <p className="text-muted-foreground text-base md:text-lg max-w-2xl mx-auto px-4">
-            Relive the best moments from Utkarsh through our gallery
+            Relive the best moments of energy, creativity, and competition from previous fests.
           </p>
         </motion.div>
       </div>

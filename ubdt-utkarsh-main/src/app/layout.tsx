@@ -96,7 +96,7 @@ export const metadata: Metadata = {
     description:
       "Join the national level inter-college technical and cultural festival at University BDT College of Engineering, Davanagere. 23+ events, 3 days, ₹1.5L+ prize pool!",
     images: ["https://www.utkarshubdt.in/og-image.png"],
-    creator: "@ubdtutkarsh",
+    creator: "@demo",
   },
   icons: {
     icon: [

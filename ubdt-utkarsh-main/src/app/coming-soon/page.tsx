@@ -46,7 +46,7 @@ export default function ComingSoon() {
   }, []);
 
   useEffect(() => {
-    const eventDate = new Date("February 15, 2026");
+    const eventDate = new Date("June 15, 2026");
     
     const timer = setInterval(() => {
       const now = new Date();
@@ -188,7 +188,7 @@ export default function ComingSoon() {
               className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-medium py-2 px-6 rounded-full transition-transform hover:scale-105 duration-300 shadow-lg"
             >
               <FaInstagram className="h-5 w-5" />
-              Follow @ubdtutkarsh
+              Follow @demo
             </Link>
           </div>
         </motion.div>
