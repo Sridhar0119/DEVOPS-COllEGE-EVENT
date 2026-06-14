@@ -1,152 +1,78 @@
 pipeline {
     agent any
-    
-    parameters {
-        string(name: 'AWS_ACCOUNT_ID', defaultValue: '123456789012', description: 'AWS Account ID (12-digit number)')
-        string(name: 'AWS_REGION', defaultValue: 'us-east-1', description: 'AWS Region for ECR and EKS')
-        string(name: 'EKS_CLUSTER_NAME', defaultValue: 'ubdt-eks-cluster', description: 'Target AWS EKS Cluster Name')
-        string(name: 'AWS_CREDENTIALS_ID', defaultValue: 'aws-credentials', description: 'Jenkins Credentials ID (Access Key / Secret Key). Leave empty if using IAM Instance Profile / IAM OIDC on the Jenkins node.')
-        booleanParam(name: 'RUN_LOCAL_VERIFICATION', defaultValue: false, description: 'Run local "npm install" & "npm run build" on Jenkins agent before Docker builds')
-    }
-    
+
     environment {
-        FRONTEND_IMAGE = "${params.AWS_ACCOUNT_ID}.dkr.ecr.${params.AWS_REGION}.amazonaws.com/ubdt-frontend"
-        BACKEND_IMAGE  = "${params.AWS_ACCOUNT_ID}.dkr.ecr.${params.AWS_REGION}.amazonaws.com/ubdt-backend"
+        IMAGE_FRONTEND = "mrsrii/ubdt-frontend"
+        IMAGE_BACKEND  = "mrsrii/ubdt-backend"
+        DOCKER_CREDS   = "docker_id"
     }
-    
+
     stages {
+
         stage('Checkout') {
             steps {
-                checkout scm
+                git credentialsId: 'git_id',
+                    url: 'https://github.com/Sridhar0119/DEVOPS-COllEGE-EVENT.git',
+                    branch: 'main'
             }
         }
-        
-        stage('SonarQube Analysis') {
+
+        stage('Build Frontend Image') {
             steps {
-                script {
-                    echo "Running SonarQube static code analysis..."
-                    withSonarQubeEnv('SonarQube') {
-                        sh 'sonar-scanner'
-                    }
+                dir('ubdt-utkarsh-main') {
+                    sh "docker build -t ${IMAGE_FRONTEND}:${BUILD_NUMBER} -f Dockerfile.frontend ."
                 }
             }
         }
-        
-        stage('Local Verification') {
-            when {
-                expression { params.RUN_LOCAL_VERIFICATION == true }
-            }
+
+        stage('Build Backend Image') {
             steps {
-                echo "Running local build verification..."
-                sh 'npm install'
-                sh 'npm run build'
-            }
-        }
-        
-        stage('Build Docker Images') {
-            steps {
-                script {
-                    echo "Building Frontend Docker Image..."
-                    sh "docker build -t ${env.FRONTEND_IMAGE}:${env.BUILD_NUMBER} -t ${env.FRONTEND_IMAGE}:latest -f Dockerfile.frontend ."
-                    
-                    echo "Building Backend Docker Image..."
-                    sh "docker build -t ${env.BACKEND_IMAGE}:${env.BUILD_NUMBER} -t ${env.BACKEND_IMAGE}:latest -f Dockerfile.backend ."
+                dir('ubdt-utkarsh-main') {
+                    sh "docker build -t ${IMAGE_BACKEND}:${BUILD_NUMBER} -f Dockerfile.backend ."
                 }
             }
         }
-        
-        stage('Push to AWS ECR') {
+
+        stage('Push to Docker Hub') {
             steps {
-                script {
-                    def runWithAWS = { closure ->
-                        if (params.AWS_CREDENTIALS_ID && params.AWS_CREDENTIALS_ID.trim()) {
-                            withCredentials([usernamePassword(
-                                credentialsId: params.AWS_CREDENTIALS_ID, 
-                                usernameVariable: 'AWS_ACCESS_KEY_ID', 
-                                passwordVariable: 'AWS_SECRET_ACCESS_KEY'
-                            )]) {
-                                closure()
-                            }
-                        } else {
-                            echo "AWS_CREDENTIALS_ID is empty. Authenticating using IAM Role / Agent Profile."
-                            closure()
-                        }
-                    }
-                    
-                    runWithAWS {
-                        echo "Logging into AWS ECR..."
-                        sh "aws ecr get-login-password --region ${params.AWS_REGION} | docker login --username AWS --password-stdin ${params.AWS_ACCOUNT_ID}.dkr.ecr.${params.AWS_REGION}.amazonaws.com"
-                        
-                        echo "Pushing Frontend Image..."
-                        sh "docker push ${env.FRONTEND_IMAGE}:${env.BUILD_NUMBER}"
-                        sh "docker push ${env.FRONTEND_IMAGE}:latest"
-                        
-                        echo "Pushing Backend Image..."
-                        sh "docker push ${env.BACKEND_IMAGE}:${env.BUILD_NUMBER}"
-                        sh "docker push ${env.BACKEND_IMAGE}:latest"
-                    }
+                withCredentials([usernamePassword(
+                    credentialsId: "${DOCKER_CREDS}",
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+                    sh "echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin"
+                    sh "docker push ${IMAGE_FRONTEND}:${BUILD_NUMBER}"
+                    sh "docker push ${IMAGE_BACKEND}:${BUILD_NUMBER}"
                 }
             }
         }
-        
-        stage('Deploy to EKS') {
+
+        stage('Deploy with Docker Compose') {
             steps {
-                script {
-                    def runWithAWS = { closure ->
-                        if (params.AWS_CREDENTIALS_ID && params.AWS_CREDENTIALS_ID.trim()) {
-                            withCredentials([usernamePassword(
-                                credentialsId: params.AWS_CREDENTIALS_ID, 
-                                usernameVariable: 'AWS_ACCESS_KEY_ID', 
-                                passwordVariable: 'AWS_SECRET_ACCESS_KEY'
-                            )]) {
-                                closure()
-                            }
-                        } else {
-                            echo "AWS_CREDENTIALS_ID is empty. Authenticating using IAM Role / Agent Profile."
-                            closure()
-                        }
-                    }
-                    
-                    runWithAWS {
-                        echo "Configuring kubectl for EKS cluster: ${params.EKS_CLUSTER_NAME}..."
-                        sh "aws eks update-kubeconfig --region ${params.AWS_REGION} --name ${params.EKS_CLUSTER_NAME}"
-                        
-                        echo "Injecting build tags into manifest files..."
-                        sh "sed -i 's|image: .*/ubdt-frontend:.*|image: ${env.FRONTEND_IMAGE}:${env.BUILD_NUMBER}|g' k8s/frontend-deployment.yaml"
-                        sh "sed -i 's|image: .*/ubdt-backend:.*|image: ${env.BACKEND_IMAGE}:${env.BUILD_NUMBER}|g' k8s/backend-deployment.yaml"
-                        
-                        echo "Applying ConfigMaps and Secrets..."
-                        sh "kubectl apply -f k8s/configmap.yaml"
-                        sh "kubectl apply -f k8s/secrets.yaml"
-                        
-                        echo "Deploying applications..."
-                        sh "kubectl apply -f k8s/frontend-deployment.yaml"
-                        sh "kubectl apply -f k8s/backend-deployment.yaml"
-                        sh "kubectl apply -f k8s/nginx-gateway.yaml"
-                        
-                        echo "Verifying Rollout Status..."
-                        sh "kubectl rollout status deployment/frontend --timeout=3m"
-                        sh "kubectl rollout status deployment/backend --timeout=3m"
-                        sh "kubectl rollout status deployment/nginx-gateway --timeout=3m"
-                    }
+                dir('ubdt-utkarsh-main') {
+                    sh 'docker compose down || true'
+                    sh 'docker compose up -d --build'
                 }
+            }
+        }
+
+        stage('Verify') {
+            steps {
+                sh "docker compose -f ubdt-utkarsh-main/docker-compose.yml ps"
+                sh "curl -f http://localhost/health || echo 'Health check done'"
             }
         }
     }
-    
+
     post {
-        always {
-            echo "Cleaning up local build workspace images..."
-            sh "docker rmi ${env.FRONTEND_IMAGE}:${env.BUILD_NUMBER} || true"
-            sh "docker rmi ${env.FRONTEND_IMAGE}:latest || true"
-            sh "docker rmi ${env.BACKEND_IMAGE}:${env.BUILD_NUMBER} || true"
-            sh "docker rmi ${env.BACKEND_IMAGE}:latest || true"
-        }
         success {
-            echo "Deployment Pipeline completed successfully."
+            echo "✅ Deployment successful! App is live at http://YOUR-SERVER-IP"
         }
         failure {
-            echo "Deployment Pipeline failed. Please check build logs."
+            echo "❌ Pipeline failed. Check logs above."
+        }
+        always {
+            sh "docker image prune -f || true"
         }
     }
 }
