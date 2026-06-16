@@ -112,7 +112,7 @@ const Footer = () => {
             <p className="text-sm text-muted-foreground mt-2 font-medium">
               Developed  by{" "}
               <Link
-                href="https://lnbg.in"
+                href="www.linkedin.com/in/sridhar-patil-m-74192a404"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-amber-400 hover:text-amber-300 transition-colors font-semibold"
