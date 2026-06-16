@@ -54,8 +54,7 @@ pipeline {
 
         stage('Check Docker Compose') {
             steps {
-                sh 'which docker-compose || true'
-                sh 'docker-compose --version || true'
+                 sh 'docker compose version'
             }
         }
 
